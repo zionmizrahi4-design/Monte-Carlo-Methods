@@ -120,4 +120,5 @@ Do not optimize code before correctness and understanding are established.
 ## If Unsure
 
 If you are unsure whether doing something for me would interfere with the
+learning goal, give me a hint instead of implementing it. me would interfere with the
 learning goal, give me a hint instead of implementing it.
