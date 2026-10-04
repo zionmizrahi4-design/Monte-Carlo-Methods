@@ -28,20 +28,18 @@ def calc_se(f_samples, mc_value):
     return s/np.sqrt(n)
 
 def test_mc():
+
+    """Usage example: estimate the integral of x^2 between 0 and 1 with confidence of 99%"""
     seed = 45
     n = 100000
     confidence = 0.99
 
-
     rng = np.random.default_rng(seed)
-
-   
-    #estimate the following integral
-    #int[0 1](x^2 dx)
-    #with confidence of 99%
     samples = rng.uniform(0, 1, n)
     f = lambda x : x**2
-    print(mc(samples, f, confidence))
+
+
+    mc_value, se, lower_bound, upper_bound = mc(samples, f, confidence)
 
 
 if __name__ == "__main__":
