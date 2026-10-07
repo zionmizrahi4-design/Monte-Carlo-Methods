@@ -1,6 +1,6 @@
 import numpy as np
-from monte_carlo_result import MonteCarloResult
-import mc_estimation as mc
+from .monte_carlo_result import MonteCarloResult
+from . import mc_estimation as mc
 import math
 
 
