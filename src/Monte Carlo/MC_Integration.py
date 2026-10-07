@@ -3,24 +3,29 @@ from MonteCarloResult import MonteCarloResult
 import MC_Estimation as mc
 import math
 
-"""
-Goal here is to demonstrate the simple usage of the monte carlo method by estimating integrals:
 
-function will estimate given integrals using uniform distribution's expected value of f(x) by the following estimator:
-In = ((b-a) / n) * sigma[i=1 -> i =n](f(x_i))      (derived straight from the ev formula of f(x))
-The estimator above is unbiased for the requested integral.
-
-input: 
-    f - function to integrate
-    lower_limit, upper limit - limits of the integral
-    number of samples to generate
-    requested confidence lvl
-    seed (for reproductibility, None for random)
-
-output:
-    MonteCarloResult object
-"""
 def integrate (f, lower_limit, upper_limit, num_of_samples, confidence, seed=None):
+    """
+    Goal here is to demonstrate the simple usage of the monte carlo method by estimating integrals:
+
+    function will estimate given integrals using uniform distribution's expected value of f(x) by the following estimator:
+    In = ((b-a) / n) * sigma[i=1 -> i =n](f(x_i))      (derived straight from the ev formula of f(x))
+    The estimator above is unbiased for the requested integral.
+
+    input: 
+        f - function to integrate
+        lower_limit, upper limit - limits of the integral
+        number of samples to generate
+        requested confidence lvl
+        seed (for reproductibility, None for random)
+
+    output:
+        MonteCarloResult object
+    """
+    #validate input:
+    sgn = 1
+    if (not (math.isfinite(lower_limit) and math.isfinite(upper_limit))) or (not math.isfinite(upper_limit - lower_limit)):
+        raise ValueError("integral limits contain non finite values or interval too large!")
     if not callable(f):
         raise TypeError("f must be callable")
     if isinstance(num_of_samples, (bool, np.bool_)) or not isinstance(num_of_samples, (int, np.integer)):
@@ -29,14 +34,14 @@ def integrate (f, lower_limit, upper_limit, num_of_samples, confidence, seed=Non
         raise ValueError("At least 2 samples are required")
     if not 0 < confidence < 1:
         raise ValueError("Confidence level must be between 0 and 1")
-    sgn = 1
-    if (not (math.isfinite(lower_limit) and math.isfinite(upper_limit))) or (not math.isfinite(upper_limit - lower_limit)):
-        raise ValueError("integral limits contain non finite values or interval too large!")
+
+    if upper_limit == lower_limit: #degenerate case
+        return MonteCarloResult(0.0, 0.0, [0.0, 0.0], 0, 0)
     if upper_limit < lower_limit: 
         lower_limit, upper_limit = upper_limit, lower_limit
         sgn = -1
-    elif upper_limit == lower_limit: #degenerate case
-        return MonteCarloResult(0, 0, 0, 0)
+    
+    
     
 
 
@@ -52,11 +57,7 @@ def integrate (f, lower_limit, upper_limit, num_of_samples, confidence, seed=Non
     i_interval = mc.calc_interval(confidence, i_se, i_estimation)
     i_sample_size = num_of_samples
 
-    result = MonteCarloResult(i_estimation, i_se, i_interval, i_sample_size)
+    result = MonteCarloResult(i_estimation, i_se, i_interval,confidence, i_sample_size)
     
     return result
 
-
-#test
-r = integrate(lambda x : x**2, 1, 0, 1000, 0.95)
-print(r.estimate)
