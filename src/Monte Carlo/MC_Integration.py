@@ -1,6 +1,7 @@
 import numpy as np
 from MonteCarloResult import MonteCarloResult
 import MC_Estimation as mc
+import math
 
 """
 Goal here is to demonstrate the simple usage of the monte carlo method by estimating integrals:
@@ -19,15 +20,34 @@ input:
 output:
     MonteCarloResult object
 """
-def integrate (f, lower_limit, upper_limit, num_of_samples, confidence, seed = None):
+def integrate (f, lower_limit, upper_limit, num_of_samples, confidence, seed=None):
+    if not callable(f):
+        raise TypeError("f must be callable")
+    if isinstance(num_of_samples, (bool, np.bool_)) or not isinstance(num_of_samples, (int, np.integer)):
+        raise TypeError("num_of_samples must be an integer")
+    if num_of_samples < 2:
+        raise ValueError("At least 2 samples are required")
+    if not 0 < confidence < 1:
+        raise ValueError("Confidence level must be between 0 and 1")
+    sgn = 1
+    if (not (math.isfinite(lower_limit) and math.isfinite(upper_limit))) or (not math.isfinite(upper_limit - lower_limit)):
+        raise ValueError("integral limits contain non finite values or interval too large!")
+    if upper_limit < lower_limit: 
+        lower_limit, upper_limit = upper_limit, lower_limit
+        sgn = -1
+    elif upper_limit == lower_limit: #degenerate case
+        return MonteCarloResult(0, 0, 0, 0)
+    
+
+
     rng = np.random.default_rng(seed)
-    samples = rng.uniform(lower_limit, upper_limit, num_of_samples)#TODO: validate 
+    samples = rng.uniform(lower_limit, upper_limit, num_of_samples)
 
     #calc expecred value part of equation
     mc_result = mc.monte_carlo(samples, f, confidence) 
 
     #calc integral properties:
-    i_estimation = mc_result.estimate * (upper_limit - lower_limit)
+    i_estimation = sgn * mc_result.estimate * (upper_limit - lower_limit)
     i_se = (upper_limit - lower_limit) * mc_result.standard_error
     i_interval = mc.calc_interval(confidence, i_se, i_estimation)
     i_sample_size = num_of_samples
@@ -35,3 +55,8 @@ def integrate (f, lower_limit, upper_limit, num_of_samples, confidence, seed = N
     result = MonteCarloResult(i_estimation, i_se, i_interval, i_sample_size)
     
     return result
+
+
+#test
+r = integrate(lambda x : x**2, 1, 0, 1000, 0.95)
+print(r.estimate)

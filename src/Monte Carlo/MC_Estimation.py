@@ -5,7 +5,16 @@ from MonteCarloResult import MonteCarloResult
 
 def monte_carlo(samples, f, confidence=0.95):
     
-    f_samples = f(samples)
+    f_samples = np.asarray(f(samples))
+
+    if f_samples.ndim == 0:
+        f_samples = np.full(samples.shape, f_samples)
+
+    if f_samples.shape != samples.shape:
+        raise ValueError("f(samples) must return one value per sample")
+
+    if not np.all(np.isfinite(f_samples)):
+        raise ValueError("f(samples) contains non-finite values")
 
     if not np.all(np.isfinite(f_samples)):
         raise ValueError("f(samples) contains non-finite values")
@@ -19,7 +28,7 @@ def monte_carlo(samples, f, confidence=0.95):
     lower_bound, upper_bound = calc_interval(confidence, se, mc_value)
     interval = [lower_bound, upper_bound]
 
-    result = MonteCarloResult(mc_value, se, interval, len(f_samples))
+    result = MonteCarloResult(mc_value, se, interval, confidence,  len(f_samples))
 
     return result
 
