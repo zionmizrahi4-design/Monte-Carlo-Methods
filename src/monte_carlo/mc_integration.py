@@ -36,7 +36,7 @@ def integrate (f, lower_limit, upper_limit, num_of_samples, confidence=0.95, see
         raise ValueError("Confidence level must be between 0 and 1")
 
     if upper_limit == lower_limit: #degenerate case
-        return MonteCarloResult(0.0, 0.0, [0.0, 0.0], 0, confidence, 0)
+        return MonteCarloResult(0.0, 0.0, [0.0, 0.0], confidence, 0)
     if upper_limit < lower_limit: 
         lower_limit, upper_limit = upper_limit, lower_limit
         sgn = -1
