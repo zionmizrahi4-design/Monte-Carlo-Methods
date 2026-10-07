@@ -1,7 +1,7 @@
 from scipy.stats import norm
 import numpy as np
 
-from MonteCarloResult import MonteCarloResult
+from monte_carlo_result import MonteCarloResult
 
 def monte_carlo(samples, f, confidence=0.95):
     

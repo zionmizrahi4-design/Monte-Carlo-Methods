@@ -1,10 +1,10 @@
 import numpy as np
-from MonteCarloResult import MonteCarloResult
-import MC_Estimation as mc
+from monte_carlo_result import MonteCarloResult
+import mc_estimation as mc
 import math
 
 
-def integrate (f, lower_limit, upper_limit, num_of_samples, confidence, seed=None):
+def integrate (f, lower_limit, upper_limit, num_of_samples, confidence=0.95, seed=None):
     """
     Goal here is to demonstrate the simple usage of the monte carlo method by estimating integrals:
 
@@ -36,7 +36,7 @@ def integrate (f, lower_limit, upper_limit, num_of_samples, confidence, seed=Non
         raise ValueError("Confidence level must be between 0 and 1")
 
     if upper_limit == lower_limit: #degenerate case
-        return MonteCarloResult(0.0, 0.0, [0.0, 0.0], 0, 0)
+        return MonteCarloResult(0.0, 0.0, [0.0, 0.0], 0, confidence, 0)
     if upper_limit < lower_limit: 
         lower_limit, upper_limit = upper_limit, lower_limit
         sgn = -1
