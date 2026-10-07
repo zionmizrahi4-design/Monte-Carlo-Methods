@@ -1,7 +1,9 @@
 from scipy.stats import norm
 import numpy as np
 
-def mc(samples, f, confidence=0.95):
+from MonteCarloResult import MonteCarloResult
+
+def monte_carlo(samples, f, confidence=0.95):
     
     f_samples = f(samples)
 
@@ -15,8 +17,11 @@ def mc(samples, f, confidence=0.95):
     mc_value = np.mean(f_samples)
     se = calc_se(f_samples, mc_value)
     lower_bound, upper_bound = calc_interval(confidence, se, mc_value)
+    interval = [lower_bound, upper_bound]
 
-    return mc_value, se, lower_bound, upper_bound
+    result = MonteCarloResult(mc_value, se, interval, len(f_samples))
+
+    return result
 
 def calc_interval(confidence, se, mc_value):
     z_crit_value = norm.ppf((1 + confidence) / 2)
@@ -34,12 +39,13 @@ def test_mc():
     n = 100000
     confidence = 0.99
 
+    #Create samples and function
     rng = np.random.default_rng(seed)
     samples = rng.uniform(0, 1, n)
     f = lambda x : x**2
 
 
-    mc_value, se, lower_bound, upper_bound = mc(samples, f, confidence)
+    result = monte_carlo(samples, f, confidence)
 
 
 if __name__ == "__main__":
