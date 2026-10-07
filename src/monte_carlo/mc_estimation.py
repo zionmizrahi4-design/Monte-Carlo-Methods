@@ -15,9 +15,6 @@ def monte_carlo(samples, f, confidence=0.95):
 
     if not np.all(np.isfinite(f_samples)):
         raise ValueError("f(samples) contains non-finite values")
-
-    if not np.all(np.isfinite(f_samples)):
-        raise ValueError("f(samples) contains non-finite values")
     if not 0 < confidence < 1:
         raise ValueError("Confidence level must be between 0 and 1")
     if len(f_samples) < 2:
