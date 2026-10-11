@@ -61,20 +61,3 @@ def integrate (f, lower_limit, upper_limit, num_of_samples, confidence=0.95, see
     result = MonteCarloResult(i_estimation, i_se, i_interval,confidence, i_sample_size)
     
     return result
-
-if __name__ == "__main__":
-    f = lambda x: 10
-    lower_limit, upper_limit = 10, 0
-
-    result = integrate(
-        f,
-        lower_limit,
-        upper_limit,
-        num_of_samples=10_000,
-        confidence=0.95,
-        seed=42,
-    )
-
-    print(result.estimate)
-    print(result.standard_error)
-    print(result.confidence_interval)
