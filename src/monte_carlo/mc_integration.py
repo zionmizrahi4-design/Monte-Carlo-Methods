@@ -4,6 +4,7 @@ from . import mc_estimation as mc
 import math
 
 
+
 def integrate (f, lower_limit, upper_limit, num_of_samples, confidence=0.95, seed=None):
     """
     Goal here is to demonstrate the simple usage of the monte carlo method by estimating integrals:
@@ -14,7 +15,7 @@ def integrate (f, lower_limit, upper_limit, num_of_samples, confidence=0.95, see
 
     input: 
         f - function to integrate
-        lower_limit, upper limit - limits of the integral
+        lower_limit, upper limit - limits of the integral (finite only)
         number of samples to generate
         requested confidence lvl
         seed (for reproductibility, None for random)
@@ -61,3 +62,19 @@ def integrate (f, lower_limit, upper_limit, num_of_samples, confidence=0.95, see
     
     return result
 
+if __name__ == "__main__":
+    f = lambda x: 10
+    lower_limit, upper_limit = 10, 0
+
+    result = integrate(
+        f,
+        lower_limit,
+        upper_limit,
+        num_of_samples=10_000,
+        confidence=0.95,
+        seed=42,
+    )
+
+    print(result.estimate)
+    print(result.standard_error)
+    print(result.confidence_interval)

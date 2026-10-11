@@ -90,4 +90,3 @@ def test_wrong_output_shape_raises():
 
     with pytest.raises(ValueError):
         monte_carlo(samples, f)
-
