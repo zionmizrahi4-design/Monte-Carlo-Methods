@@ -3,6 +3,8 @@ import numpy as np
 
 from .monte_carlo_result import MonteCarloResult
 
+
+
 def monte_carlo(samples, f, confidence=0.95):
     
     f_samples = np.asarray(f(samples))
