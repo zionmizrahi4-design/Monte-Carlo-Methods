@@ -40,21 +40,3 @@ def calc_se(f_samples, mc_value):
     s = np.sqrt(1/(n- 1) * ((f_samples - mc_value)**2).sum())
     return s/np.sqrt(n)
 
-def test_mc():
-
-    """Usage example: estimate the integral of x^2 between 0 and 1 with confidence of 99%"""
-    seed = 45
-    n = 100000
-    confidence = 0.99
-
-    #Create samples and function
-    rng = np.random.default_rng(seed)
-    samples = rng.uniform(0, 1, n)
-    f = lambda x : x**2
-
-
-    result = monte_carlo(samples, f, confidence)
-
-
-if __name__ == "__main__":
-    test_mc()
