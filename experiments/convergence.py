@@ -44,6 +44,7 @@ Graph 5:
 
 from monte_carlo import integrate, MonteCarloResult
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mtick
 import numpy as np
 
 
@@ -62,7 +63,7 @@ NUMBER_OF_EXPERIMENTS = 10000
 
 
 #Used for both rmse and ci success rate graphs
-RMSE_SAMPLE_SIZE = [10, 30, 100, 1000, 3000, 10000]
+RMSE_SAMPLE_SIZE = [10, 30, 100, 1000, 3000, 5000, 7000, 10000]
 RMSE_REPETITION = 1000
 
 
@@ -250,7 +251,7 @@ def visualize_estimate_distribution(results: list[MonteCarloResult]):
 
     ax.text(
         0.02, 0.95,
-        f"Empirical Mean: {empirical_mean:.6f} \nTrue value: {THEORETICAL_VALUE:.6}\nAbsolute error: {(empirical_mean - THEORETICAL_VALUE):.3}",
+        f"Empirical Mean: {empirical_mean:.6f} \nTrue value: {THEORETICAL_VALUE:.6}\nAbsolute error: {abs((empirical_mean - THEORETICAL_VALUE)):.3}",
         transform=ax.transAxes,
         fontsize=12,
         verticalalignment="top",
@@ -322,16 +323,19 @@ def visualize_confidence_coverage(
 
     fig, ax = plt.subplots(figsize=(12, 6))
 
-    # Empirical coverage rate
+    # Empirical coverage
     ax.plot(
         sample_sizes,
         coverage_rates,
         color="royalblue",
-        linewidth=2,
+        linewidth=2.5,
         marker="o",
-        markersize=5,
-        alpha=0.85,
-        label="Empirical Coverage"
+        markersize=6,
+        markerfacecolor="white",
+        markeredgewidth=2,
+        alpha=0.95,
+        label="Empirical Coverage",
+        zorder=3
     )
 
     # Nominal confidence level
@@ -340,36 +344,66 @@ def visualize_confidence_coverage(
         color="crimson",
         linestyle="--",
         linewidth=2,
-        label=f"Nominal Coverage ({CONFIDENCE:.0%})"
+        label=f"Nominal Coverage ({CONFIDENCE:.0%})",
+        zorder=2
     )
+
+    # Dynamic y-axis limits with 5% margin
+    margin = 0.05
+    tick_step = 0.05
+
+    min_rate = min(min(coverage_rates), CONFIDENCE)
+    max_rate = max(max(coverage_rates), CONFIDENCE)
+
+    lower = max(
+        0,
+        np.floor((min_rate - margin) / tick_step) * tick_step
+    )
+    upper = min(
+        1,
+        np.ceil((max_rate + margin) / tick_step) * tick_step
+    )
+
+    ax.set_ylim(lower, upper)
+
+    ticks = np.arange(
+        round(lower / tick_step),
+        round(upper / tick_step) + 1
+    ) * tick_step
+
+    ax.set_yticks(ticks)
+    ax.set_yticklabels([f"{tick:.0%}" for tick in ticks])
 
     # Labels and title
     ax.set_title(
         "Monte Carlo Integration — Confidence Interval Coverage",
         fontsize=16,
         fontweight="bold",
-        pad=15
+        pad=18
     )
 
     ax.set_xlabel("Number of Samples (n)", fontsize=12)
-    ax.set_ylabel("Coverage Rate (%)", fontsize=12)
-
-    # Convert y-axis values to percentages
-    ax.yaxis.set_major_formatter(
-        plt.FuncFormatter(lambda y, _: f"{y:.0%}")
-    )
+    ax.set_ylabel("Coverage Rate", fontsize=12)
 
     # Appearance
-    ax.grid(True, linestyle="--", alpha=0.25)
-    ax.legend(loc="best", frameon=False)
+    ax.grid(
+        axis="y",
+        linestyle="--",
+        linewidth=0.8,
+        alpha=0.25
+    )
+
+    ax.tick_params(axis="both", labelsize=11, length=0)
+    ax.legend(loc="best", frameon=False, fontsize=11)
 
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
-
-    ax.set_ylim(0, 1)
+    ax.spines["left"].set_alpha(0.3)
+    ax.spines["bottom"].set_alpha(0.3)
 
     fig.tight_layout()
     plt.show()
+
 
 #normal pdf function:  1 / sqrt(2pi) * e^(x-mu)^2 / 2 * sigma^2
 def normal_pdf(x, mu, sigma):
