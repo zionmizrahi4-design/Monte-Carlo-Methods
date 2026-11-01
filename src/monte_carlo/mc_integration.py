@@ -42,9 +42,6 @@ def integrate (f, lower_limit, upper_limit, num_of_samples, confidence=0.95, see
         lower_limit, upper_limit = upper_limit, lower_limit
         sgn = -1
     
-    
-    
-
 
     rng = np.random.default_rng(seed)
     samples = rng.uniform(lower_limit, upper_limit, num_of_samples)
