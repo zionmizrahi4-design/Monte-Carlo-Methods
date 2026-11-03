@@ -54,7 +54,9 @@ LOWER = 0
 THEORETICAL_VALUE = 1/3                                 #integral value 
 THEORETICAL_VARIANCE = 4 / 45                           #Var(f(x))
 
-SEED = int(np.random.default_rng().integers(0, 2**32))  #Use the same random seed throught the experiment
+
+#SEED = int(np.random.default_rng().integers(0, 2**32))  #Use the same random seed throught the experiment
+SEED = 69
 SAMPLE_SIZES = list(range(10, 10000, 10))
 CONFIDENCE = 0.95
 
@@ -442,8 +444,15 @@ def run_experiments() -> list[MonteCarloResult]:
 
 def run_repeated_experiments(n: int, repetitions: int):
     experiments = []
-    for i in range(0, repetitions):
-        experiments.append(integrate(F, LOWER, UPPER, n, CONFIDENCE, None))#TODO: seed = None disables reproducbility (fix later)
+    rng = np.random.default_rng(42)
+
+    for _ in range(repetitions):
+        seed = int(rng.bit_generator.random_raw())
+
+        experiments.append(
+            integrate(F, LOWER, UPPER, n, CONFIDENCE, seed)
+        )
+
     return experiments
 
 
