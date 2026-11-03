@@ -10,41 +10,46 @@ This project implements a reusable Monte Carlo integration estimator and investi
 
 ## Results at a glance
 
-The main benchmark is the exactly solvable integral
+Our benchmark is the exactly solvable integral
 
 $$
 I=\int_0^1 x^2\,dx=\frac13.
 $$
 
-The project implements the estimator
+For independent $U_i\sim\mathrm{Uniform}(0,1)$, the Monte Carlo estimator is
 
 $$
-\widehat I_n=\frac1n\sum_{i=1}^{n}U_i^2,
-\qquad U_i\overset{\mathrm{iid}}{\sim}\mathrm{Uniform}(0,1),
+\widehat I_n=\frac1n\sum_{i=1}^n U_i^2,
+\qquad
+\mathrm{Var}(\widehat I_n)=\frac4{45n}.
 $$
 
-whose variance is exactly $4/(45n)$.
+The following figures are **the actual PNG plots saved in the repository's [figures/](figures/) directory**, not recreated charts. Descriptions distinguish what is directly visible in those figures from theoretical values derived below.
 
-| Experiment | Main finding |
+| Experiment | Observation from the saved figures |
 | --- | --- |
-| Sampling distribution / CLT | Across **10,000 independent-seed pseudorandom trials** of **10,000 samples each**, empirical mean **0.333317** versus exact **0.333333**; sampling SD **0.003012** versus theoretical **0.002981** |
-| Convergence / RMSE | Empirical RMSE closely matches the derived $n^{-1/2}$ error rate |
-| Confidence-interval coverage | Nominal **95%** intervals cover the exact answer in **91.7%** of trials at $n=10$ and **95.0%** at $n=1{,}000$, using 1,000 trials per sample size |
-| Reproducibility | Fixed seeds and deterministic per-repetition seed generation make experiments repeatable |
+| CLT / sampling distribution | The histogram of repeated estimates at $n=10{,}000$ closely follows the theoretical normal curve. The figure displays an empirical mean of **0.333317**, compared with the exact value **0.333333**. |
+| RMSE convergence | The empirical RMSE line closely tracks the analytical $n^{-1/2}$ prediction over the plotted sample sizes. |
+| 95% confidence interval coverage | The graph starts at approximately **92%** coverage for the smallest sample size and approaches/fluctuates around **95%** as sample size grows. |
+| Reproducibility | The current experiment code uses fixed seeds; running it in a consistent environment reproduces the same pseudorandom draws. |
 
-All displayed numerical summaries were verified using the same fixed-seed sampling protocol as the code. They describe statistical accuracy, **not runtime performance**.
+### Central Limit Theorem: observed sampling distribution
 
-![Histogram of Monte Carlo integral estimates with the theoretical normal distribution](docs/figures/clt-distribution.svg)
+![Original Monte Carlo CLT histogram](figures/CLT.png)
 
-*Figure 1 — Sampling distribution of the estimator. The orange curve uses the analytical mean and variance; it is not fitted to the histogram.*
+*Original figure from `figures/CLT.png`. The displayed empirical mean and exact target are annotations produced by the experiment script.*
 
-![Empirical versus theoretical Monte Carlo RMSE](docs/figures/rmse-convergence.svg)
+### RMSE compared with its theoretical prediction
 
-*Figure 2 — Empirical RMSE against $\sqrt{4/(45n)}$, with 1,000 independent-seed trials at each sample size.*
+![Original RMSE convergence experiment](figures/RMSE_convegence.png)
 
-![Empirical and nominal confidence interval coverage](docs/figures/coverage.svg)
+*Original figure from `figures/RMSE_convegence.png`. The theoretical curve follows $\sqrt{4/(45n)}$; the plotted empirical RMSE is calculated from repeated experiments.*
 
-*Figure 3 — Empirical coverage of nominal 95% normal-approximation confidence intervals, with 1,000 trials at each sample size.*
+### Coverage of nominal 95% confidence intervals
+
+![Original confidence interval coverage experiment](figures/Confidence%20interval%20convergence.png)
+
+*Original figure from `figures/Confidence interval convergence.png`. The red reference line marks nominal 95% coverage; the blue line shows observed coverage.*
 
 ---
 
@@ -230,6 +235,17 @@ The estimator approaches the true integral as the sample count grows, though ind
 - `experiments/convergence.py` plots Monte Carlo estimates of $\int_0^1x^2\,dx$ for increasing sample sizes, with a horizontal reference line at $1/3$.
 - A separate plot tracks the absolute error $|\widehat I_n-I|$ on logarithmic axes.
 
+The original convergence and absolute-error figures are:
+
+![Original Monte Carlo integral estimates as sample size increases](figures/Integral%20Estimation.png)
+
+*Original figure: `figures/Integral Estimation.png`.*
+
+![Original Monte Carlo absolute error](figures/Absolute%20error%20%28Intergral%20Estimation%29.png)
+
+*Original figure: `figures/Absolute error (Intergral Estimation).png` (filename preserved as committed).*
+
+
 An important distinction: an observed error for one run is noisy. To study an estimator's typical error rate, repeated simulations are more informative.
 
 ## 4. Sampling distributions and the Central Limit Theorem
@@ -261,12 +277,13 @@ $$
 
 **Experiment:** generate 10,000 complete Monte Carlo estimates, each based on $n=10{,}000$ independent uniform draws; plot the histogram; overlay the normal density calculated using the **theoretical** mean and standard deviation.
 
-| Quantity | Empirical | Theoretical |
-| --- | ---: | ---: |
-| Mean of repeated estimates | 0.333317 | 0.333333 |
-| Standard deviation of repeated estimates | 0.003012 | 0.002981 |
+The saved CLT image prints the empirical mean **0.333317** and the exact value **0.333333**. The theoretical sampling standard deviation at this sample size is
 
-The histogram's agreement with the curve provides numerical evidence for the large-sample approximation. A single large-$n$ histogram is **not** a proof of the CLT or a complete assessment of convergence to normality.
+$$
+\sqrt{\frac4{45(10{,}000)}}\approx0.002981.
+$$
+
+This standard deviation is an **analytical prediction**, not a separately reported measurement in the screenshot. The histogram's agreement with the curve provides numerical evidence for the large-sample approximation. A single large-$n$ histogram is **not** a proof of the CLT or a complete assessment of convergence to normality.
 
 **LLN vs. CLT:** the LLN tells us *where* estimates concentrate; the CLT describes the approximate *distribution of their scaled fluctuations*.
 
@@ -306,22 +323,20 @@ $$
 
 This is a **statistical estimate of RMSE**, so it fluctuates slightly across finite collections of trials.
 
-### Measured error and interval coverage
+### RMSE results and interpretation
 
-The following values are reproducible using the code's master seed of 42 and $R=1{,}000$ repetitions for each row:
+The original [RMSE figure](figures/RMSE_convegence.png) plots empirical RMSE alongside the theoretical prediction $\sqrt{4/(45n)}$ at the eight sample sizes defined in `experiments/convergence.py`, with 1,000 repeated integrations per sample size.
 
-| Samples $n$ | Empirical RMSE | Theoretical RMSE | Empirical 95% coverage |
-| ---: | ---: | ---: | ---: |
-| 10 | 0.093383 | 0.094281 | 91.7% |
-| 30 | 0.055448 | 0.054433 | 92.8% |
-| 100 | 0.030834 | 0.029814 | 94.1% |
-| 1,000 | 0.009720 | 0.009428 | 95.0% |
-| 3,000 | 0.005508 | 0.005443 | 94.8% |
-| 5,000 | 0.004431 | 0.004216 | 94.3% |
-| 7,000 | 0.003578 | 0.003563 | 95.1% |
-| 10,000 | 0.003052 | 0.002981 | 94.1% |
+For reference, the **theoretical** RMSE values derived from the formula are:
 
-The small differences between empirical and theoretical RMSE are expected because the empirical values are calculated from a finite number of runs.
+| Samples $n$ | Theoretical RMSE $\sqrt{4/(45n)}$ |
+| ---: | ---: |
+| 10 | 0.094281 |
+| 100 | 0.029814 |
+| 1,000 | 0.009428 |
+| 10,000 | 0.002981 |
+
+These are **calculated theoretical values**, not empirical measurements taken from the image. The saved figure provides the empirical comparison; this repository does not currently commit a machine-readable CSV containing the individual trial results.
 
 ## 6. Confidence intervals: deriving and testing coverage
 
@@ -352,7 +367,7 @@ $$
 \mathbf 1\!\{L_r\le I\le U_r\}.
 $$
 
-The observed coverage is 91.7% at $n=10$ and fluctuates around the nominal 95% target as $n$ increases.
+In the original saved plot, coverage is approximately **92% at $n=10** and fluctuates around the nominal 95% target for larger $n$. These are visual readings from the plotted figure, not exact values taken from a saved CSV.
 
 This also demonstrates a limitation: at small sample sizes, **estimated variance and the normal approximation can produce undercoverage**, even though the estimator itself is unbiased.
 
@@ -453,7 +468,7 @@ python -m pytest -q
 
 The convergence script opens five Matplotlib plots using `plt.show()`; close each window to proceed to the next. Its large repeated experiments may require substantial computation.
 
-The figures embedded at the top of this README are saved summaries of the same experiment configuration; the script currently opens its plots interactively rather than automatically writing image files.
+The figures embedded above are the **original PNG files checked into the repository's `figures/` directory**. The script currently opens plots interactively rather than automatically writing image files. To regenerate the plots, run the experiment and save the displayed figures if you want to replace the committed PNGs.
 
 ## 9. Assumptions, limitations, and interpretation
 
@@ -487,4 +502,4 @@ This project connects mathematical statistics to practical scientific computing:
 
 ---
 
-*Methodological note: all tabulated benchmark statistics are obtained from the fixed-seed $f(x)=x^2$ experiment. The code and results are deliberately limited to the methods actually implemented in the repository.*
+*Methodological note: empirical observations quoted above are drawn from the original committed figures or their visible annotations. Numerical theoretical predictions are derived from the exact benchmark formulas. No separately generated empirical table is presented as if it were sourced from those figures.*
