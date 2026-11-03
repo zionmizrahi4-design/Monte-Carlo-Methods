@@ -134,7 +134,7 @@ Then
 $$
 \begin{aligned}
 \mathrm{Var}(\widehat I_n)
-&=\mathrm{Var}\left(\frac{b-a}{n}\sum_{i=1}^{n}f(U_i)\right)\\
+&=\mathrm{Var}(\frac{b-a}{n}\sum_{i=1}^{n}f(U_i))\\
 &=\frac{(b-a)^2}{n^2}\sum_{i=1}^{n}\mathrm{Var}(f(U_i))\\
 &=\boxed{\frac{(b-a)^2\sigma_f^2}{n}}.
 \end{aligned}
@@ -247,7 +247,7 @@ For large $n$, the estimator's sampling distribution is approximately
 
 $$
 \widehat I_n\ \dot\sim\
-\mathcal N\left(I,\frac{(b-a)^2\sigma_f^2}{n}\right).
+\mathcal N(I,\frac{(b-a)^2\sigma_f^2}{n}).
 $$
 
 In the benchmark case,
@@ -255,7 +255,7 @@ In the benchmark case,
 $$
 \boxed{
 \widehat I_n\ \dot\sim\
-\mathcal N\left(\frac13,\frac4{45n}\right).
+\mathcal N(\frac13,\frac4{45n}).
 }
 $$
 
@@ -349,7 +349,7 @@ For each sample size, the project constructs $R=1{,}000$ intervals and measures
 $$
 \widehat C_R
 =\frac1R\sum_{r=1}^{R}
-\mathbf 1\!\left\{L_r\le I\le U_r\right\}.
+\mathbf 1\!\{L_r\le I\le U_r\}.
 $$
 
 The observed coverage is 91.7% at $n=10$ and fluctuates around the nominal 95% target as $n$ increases.
