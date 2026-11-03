@@ -54,8 +54,12 @@ LOWER = 0
 THEORETICAL_VALUE = 1/3                                 #integral value 
 THEORETICAL_VARIANCE = 4 / 45                           #Var(f(x))
 
+<<<<<<< HEAD
 
 #SEED = int(np.random.default_rng().integers(0, 2**32))  #Use the same random seed throught the experiment
+=======
+# Fixed seed so individual convergence curves can be reproduced
+>>>>>>> 0f73f6680d6bb466b9ecad228ec8d94c2e8c4baa
 SEED = 69
 SAMPLE_SIZES = list(range(10, 10000, 10))
 CONFIDENCE = 0.95
@@ -444,6 +448,7 @@ def run_experiments() -> list[MonteCarloResult]:
 
 def run_repeated_experiments(n: int, repetitions: int):
     experiments = []
+<<<<<<< HEAD
     rng = np.random.default_rng(42)
 
     for _ in range(repetitions):
@@ -451,6 +456,16 @@ def run_repeated_experiments(n: int, repetitions: int):
 
         experiments.append(
             integrate(F, LOWER, UPPER, n, CONFIDENCE, seed)
+=======
+    # One master generator creates a distinct seed for each repetition.
+    # A fresh run recreates the same sequence of seeds and estimates.
+    rng = np.random.default_rng(42)
+
+    for _ in range(repetitions):
+        child_seed = int(rng.bit_generator.random_raw())
+        experiments.append(
+            integrate(F, LOWER, UPPER, n, CONFIDENCE, child_seed)
+>>>>>>> 0f73f6680d6bb466b9ecad228ec8d94c2e8c4baa
         )
 
     return experiments
