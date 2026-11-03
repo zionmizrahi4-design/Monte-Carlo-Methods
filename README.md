@@ -20,7 +20,7 @@ The project implements the estimator
 
 $$
 \widehat I_n=\frac1n\sum_{i=1}^{n}U_i^2,
-\qquad U_i\overset{\mathrm{iid}}{\sim}\operatorname{Uniform}(0,1),
+\qquad U_i\overset{\mathrm{iid}}{\sim}\mathrm{Uniform}(0,1),
 $$
 
 whose variance is exactly $4/(45n)$.
@@ -58,7 +58,7 @@ $$
 
 possibly when analytical integration is difficult or inconvenient. Monte Carlo methods replace integration by estimating an expectation using random samples.
 
-Let $a<b$ and let $U\sim\operatorname{Uniform}(a,b)$, with density
+Let $a<b$ and let $U\sim\mathrm{Uniform}(a,b)$, with density
 
 $$
 p(u)=\begin{cases}
@@ -115,7 +115,7 @@ $$
 Thus the estimator is **unbiased**:
 
 $$
-\operatorname{Bias}(\widehat I_n)
+\mathrm{Bias}(\widehat I_n)
 =\mathbb E[\widehat I_n]-I=0.
 $$
 
@@ -126,16 +126,16 @@ An unbiased estimator is correct *on average across repeated sampling*; a single
 Assume the draws are independent and $f(U)$ has finite variance
 
 $$
-\sigma_f^2=\operatorname{Var}(f(U)).
+\sigma_f^2=\mathrm{Var}(f(U)).
 $$
 
 Then
 
 $$
 \begin{aligned}
-\operatorname{Var}(\widehat I_n)
-&=\operatorname{Var}\left(\frac{b-a}{n}\sum_{i=1}^{n}f(U_i)\right)\\
-&=\frac{(b-a)^2}{n^2}\sum_{i=1}^{n}\operatorname{Var}(f(U_i))\\
+\mathrm{Var}(\widehat I_n)
+&=\mathrm{Var}\left(\frac{b-a}{n}\sum_{i=1}^{n}f(U_i)\right)\\
+&=\frac{(b-a)^2}{n^2}\sum_{i=1}^{n}\mathrm{Var}(f(U_i))\\
 &=\boxed{\frac{(b-a)^2\sigma_f^2}{n}}.
 \end{aligned}
 $$
@@ -144,7 +144,7 @@ Therefore the theoretical **standard error** is
 
 $$
 \boxed{
-\operatorname{SE}(\widehat I_n)
+\mathrm{SE}(\widehat I_n)
 =\frac{(b-a)\sigma_f}{\sqrt n}.
 }
 $$
@@ -165,7 +165,7 @@ The resulting estimated standard error is
 
 $$
 \boxed{
-\widehat{\operatorname{SE}}(\widehat I_n)
+\widehat{\mathrm{SE}}(\widehat I_n)
 =\frac{(b-a)s_f}{\sqrt n}.
 }
 $$
@@ -186,7 +186,7 @@ Therefore
 
 $$
 \begin{aligned}
-\operatorname{Var}(U^2)
+\mathrm{Var}(U^2)
 &=\mathbb E[U^4]-\big(\mathbb E[U^2]\big)^2\\
 &=\frac15-\frac19
 =\boxed{\frac4{45}}.
@@ -198,9 +198,9 @@ For the benchmark estimator,
 $$
 \boxed{\mathbb E[\widehat I_n]=\frac13},
 \qquad
-\boxed{\operatorname{Var}(\widehat I_n)=\frac4{45n}},
+\boxed{\mathrm{Var}(\widehat I_n)=\frac4{45n}},
 \qquad
-\boxed{\operatorname{SE}(\widehat I_n)=\sqrt{\frac4{45n}}}.
+\boxed{\mathrm{SE}(\widehat I_n)=\sqrt{\frac4{45n}}}.
 $$
 
 These identities supply ground truth for every experiment below; the reference values are **derived**, not estimated from the same simulation being evaluated.
@@ -275,24 +275,24 @@ The histogram's agreement with the curve provides numerical evidence for the lar
 Root mean squared error quantifies typical estimation error relative to the exact target:
 
 $$
-\operatorname{RMSE}(\widehat I_n)
+\mathrm{RMSE}(\widehat I_n)
 =\sqrt{\mathbb E[(\widehat I_n-I)^2]}.
 $$
 
 By the bias–variance identity,
 
 $$
-\operatorname{RMSE}^2(\widehat I_n)
-=\operatorname{Var}(\widehat I_n)
-+\operatorname{Bias}(\widehat I_n)^2.
+\mathrm{RMSE}^2(\widehat I_n)
+=\mathrm{Var}(\widehat I_n)
++\mathrm{Bias}(\widehat I_n)^2.
 $$
 
 Because ordinary Monte Carlo integration is unbiased under the stated assumptions,
 
 $$
 \boxed{
-\operatorname{RMSE}(\widehat I_n)
-=\operatorname{SE}(\widehat I_n)
+\mathrm{RMSE}(\widehat I_n)
+=\mathrm{SE}(\widehat I_n)
 =\sqrt{\frac4{45n}}.
 }
 $$
@@ -300,7 +300,7 @@ $$
 To estimate RMSE empirically from $R$ repeated trials, the experiment computes
 
 $$
-\widehat{\operatorname{RMSE}}
+\widehat{\mathrm{RMSE}}
 =\sqrt{\frac1R\sum_{r=1}^{R}(\widehat I_n^{(r)}-I)^2}.
 $$
 
@@ -330,14 +330,14 @@ The implementation returns a two-sided large-sample confidence interval
 $$
 \boxed{
 \widehat I_n \pm z_{1-\alpha/2}\,
-\widehat{\operatorname{SE}}(\widehat I_n)
+\widehat{\mathrm{SE}}(\widehat I_n)
 }
 $$
 
 with a normal quantile computed by `scipy.stats.norm.ppf`. At confidence level $1-\alpha=0.95$, this is approximately
 
 $$
-\widehat I_n\pm1.96\,\widehat{\operatorname{SE}}(\widehat I_n).
+\widehat I_n\pm1.96\,\widehat{\mathrm{SE}}(\widehat I_n).
 $$
 
 The **nominal** 95% level refers to long-run coverage under a suitable approximation; it does *not* mean a particular fixed interval has a 95% probability of containing an already fixed integral in the usual frequentist interpretation.
@@ -359,7 +359,7 @@ This also demonstrates a limitation: at small sample sizes, **estimated variance
 Coverage estimates have their own sampling uncertainty. If the true coverage were exactly 0.95, the standard deviation of the measured fraction from 1,000 independent repetitions would be
 
 $$
-\operatorname{SE}(\widehat C_R)
+\mathrm{SE}(\widehat C_R)
 =\sqrt{\frac{0.95(1-0.95)}{1000}}
 \approx0.0069,
 $$
